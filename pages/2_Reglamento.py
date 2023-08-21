@@ -8,7 +8,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 logo = Image.open('logo.png')
-st.set_page_config( page_title='LSM', page_icon=logo)
+st.set_page_config(page_title='Quiniela ', page_icon=logo)
 
 @st.cache_data
 def get_data():
