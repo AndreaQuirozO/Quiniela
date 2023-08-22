@@ -46,9 +46,9 @@ if not st.session_state.bloquear_res:
                                                          'Score1': 'Goles 1', 'Score2': 'Goles 2'}, inplace=True)
                     participants_results['Goles 1'] = ''
                     participants_results['Goles 2'] = ''
-                    edited_pr = st.data_editor(participants_results,
-                                                            use_container_width=False, num_rows="fixed",
-                                                            disabled=['Etapa','Fecha','Equipo 1','Equipo 2'])
+                    edited_pr = st.data_editor(participants_results,use_container_width=True, num_rows="fixed",
+                                                            disabled=['Etapa','Fecha','Equipo 1','Equipo 2']
+                                               , hide_index=True)
 
                 else:
                     st.markdown(f"<h4 style='text-align: center;'>Contraseña incorrecta</h4>", unsafe_allow_html=True)

@@ -26,8 +26,8 @@ hide_menu = """
 """
 
 url2 = 'https://forzafootball.com/tournament/womens-wc-566'
-url1 = 'https://forzafootball.com/tournament/national-womens-soccer-league-1221'
-url = 'https://forzafootball.com/tournament/women%E2%80%99s-super-league-1549'
+url = 'https://forzafootball.com/tournament/national-womens-soccer-league-1221'
+url1 = 'https://forzafootball.com/tournament/women%E2%80%99s-super-league-1549'
 
 
 @st.cache_data
@@ -128,6 +128,9 @@ def get_data_results(url):
                                          'Team1', 'Image1', 'Team2', 'Image2', 'Score1', 'Score2'])
 
     return res
+@st.cache_data
+def get_bloquear():
+    st.session_state.bloquear_res = False
 
 def get_tabla_general():
     tg = pd.read_csv('participantes.csv')
@@ -145,6 +148,7 @@ with header:
     st.session_state.fixtures = fixtures
     st.session_state.results = results
     a, b, c = st.columns(3)
+    get_bloquear()
     with st.columns(5)[2]:
         st.image(tournament_image, use_column_width=True)
     st.markdown(f"<h1 style='text-align: center;'>{tournament}</h1>", unsafe_allow_html=True)

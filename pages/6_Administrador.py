@@ -88,8 +88,6 @@ if password == contrasena:
 
         if bloquear_resultados:
             st.markdown(f"<p style='text-align: center;'>Resultados bloqueados</p>", unsafe_allow_html=True)
-        #     st.session_state.bloquear_res = True
-        # else:
-        #     st.session_state.bloquear_res = False
+
 
 
