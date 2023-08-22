@@ -9,41 +9,54 @@ warnings.filterwarnings('ignore')
 logo = Image.open('logo.png')
 st.set_page_config(page_title='Quiniela ', page_icon=logo)
 
+
+
 def get_data():
-    signs = pd.read_csv("lsm_senas.csv")
-    all_signs = signs['Palabra(s)'].to_list()
-    all_temas = signs['Tema'].unique()
-    return signs, all_signs, all_temas
+    participantes = pd.read_csv("participantes.csv")
+    nombres = participantes['Nombre'].to_list()
+    return participantes, nombres
 
-st.markdown(f"<h4 style='text-align: center;'>AGREGAR PALABRA</h4>", unsafe_allow_html=True)
-signs, all_signs, all_temas = get_data()
-all_t = np.append(all_temas, 'Otro')
+def get_participants_results(Nombre):
+    results = pd.read_csv(Nombre + '_Resultados.csv')
+    return results
 
-password = st.text_input('Contraseña:')
 
-if password == 'cultura':  
-    with st.form(key='agregar_palabra',clear_on_submit= True):
-        st.subheader("Agregar Palabra")
-        palabras = st.text_input('Palabra')
-        tema_selectbox = st.empty()
-        tema_optional_text = st.empty()
-        video1 = st.text_input('Video 1')
-        video2 = st.text_input('Video 2')
-        video3 = st.text_input('Video 3')
 
-        submitted = st.form_submit_button("Submit")
+if not st.session_state.bloquear_res:
+    header, sign_in = st.container(), st.container()
 
-    with tema_selectbox:
-        tema = st.selectbox('Selecciona los temas a estudiar', all_t)
+    with header:
+        participantes, nombres = get_data()
+        st.markdown(f"<h2 style='text-align: center;'>Agregar Resultados</h2>", unsafe_allow_html=True)
 
-    with tema_optional_text:
-        if tema == 'Otro':
-            tema = st.text_input('Tema')
+    with sign_in:
+        if len(nombres) > 0:
+            nombre = st.selectbox('Nombre', nombres)
+            password = st.text_input('Contraseña:')
+            if len(password) > 0:
+                if password == participantes[participantes['Nombre'] == nombre]['Contraseña'].iloc[0]:
+                    st.markdown(f"<h4 style='text-align: center;'>Hola {nombre}</h4>", unsafe_allow_html=True)
+                    st.markdown(f"<p style='text-align: center;'>Ingresa tus resutados en las columnas <i>Goles 1</i> y <i>Goles 2</i></p>", unsafe_allow_html=True)
+                    participants_results = get_participants_results(nombre)
+                    participants_results['Date'] = pd.to_datetime(participants_results['Date'])
+                    participants_results['Date'] = participants_results['Date'].dt.strftime("%d %b %I:%M %p")
+                    participants_results.drop(columns=['Status', 'Image1', 'Image2'], inplace=True)
+                    participants_results.rename(columns={'Stage': 'Etapa', 'Date': 'Fecha',
+                                                         'Team1': 'Equipo 1', 'Team2': 'Equipo 2',
+                                                         'Score1': 'Goles 1', 'Score2': 'Goles 2'}, inplace=True)
+                    participants_results['Goles 1'] = ''
+                    participants_results['Goles 2'] = ''
+                    edited_pr = st.data_editor(participants_results,
+                                                            use_container_width=False, num_rows="fixed",
+                                                            disabled=['Etapa','Fecha','Equipo 1','Equipo 2'])
 
-    new_sign = [palabras, tema, video1, video2, video3]
+                else:
+                    st.markdown(f"<h4 style='text-align: center;'>Contraseña incorrecta</h4>", unsafe_allow_html=True)
 
-    if submitted:
-        with open('lsm_senas.csv', 'a', newline = '') as f_object:
-            writer_object = writer(f_object)
-            writer_object.writerow(new_sign)
-            f_object.close()
+        else:
+            st.write('#')
+            st.write('#')
+            st.markdown(f"<p style='text-align: center;'>No hay participantes</p>", unsafe_allow_html=True)
+
+else:
+    st.markdown(f"<h2 style='text-align: center;'>Agregar Resultados Bloqueado</h2>", unsafe_allow_html=True)
